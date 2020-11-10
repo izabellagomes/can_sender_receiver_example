@@ -107,21 +107,38 @@ int main(void)
   sFilterConfig.FilterActivation = ENABLE;
 
   // Mask extended
-  uint32_t filter_id = 0x000;
-  uint32_t filter_mask = 0x000;
+  uint32_t filter_id = 0x00000002;
+  uint32_t filter_mask = 0xFFFFFFFF;
 
 //  sFilterConfig.FilterIdHigh = 0;//((filter_id << 5)  | (filter_id >> (32 - 5))) & 0xFFFF; // STID[10:0] & EXTID[17:13]
 //  sFilterConfig.FilterIdLow = 0;//(filter_id >> (11 - 3)) & 0xFFF8; // EXID[12:5] & 3 Reserved bits
 //  sFilterConfig.FilterMaskIdHigh = 0;//((filter_mask << 5)  | (filter_mask >> (32 - 5))) & 0xFFFF;
 //  sFilterConfig.FilterMaskIdLow = 0;//(filter_mask >> (11 - 3)) & 0xFFF8;
 
-  // Receive all messages.
+  // Filter for Ext. Id. - mask.
   sFilterConfig.FilterBank = 0;
-  sFilterConfig.FilterIdHigh = filter_id; //<< 5;
-  sFilterConfig.FilterIdLow = 0;
-  sFilterConfig.FilterMaskIdHigh = filter_mask; // << 5;
-  sFilterConfig.FilterMaskIdLow = 0;
+  sFilterConfig.FilterIdHigh = (filter_id >> 13) & 0xFFFF;
+  sFilterConfig.FilterIdLow = (filter_id << 3) & 0xFFF8;
+  sFilterConfig.FilterMaskIdHigh = (filter_mask >> 13) & 0xFFFF;
+  sFilterConfig.FilterMaskIdLow = (filter_mask << 3) & 0xFFF8;
   HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig);
+
+//  // Filter for Ext. Id. (did not work).
+//  sFilterConfig.FilterBank = 0;
+//  sFilterConfig.FilterIdHigh = (filter_id >> 13) & 0xFFFF;
+//  sFilterConfig.FilterIdLow = (filter_id << 3) & 0xFFF8;
+//  sFilterConfig.FilterMaskIdHigh = 0;
+//  sFilterConfig.FilterMaskIdLow = 0;
+//  HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig);
+
+
+  // Receive all messages.
+//  sFilterConfig.FilterBank = 0;
+//  sFilterConfig.FilterIdHigh = filter_id; //<< 5;
+//  sFilterConfig.FilterIdLow = 0;
+//  sFilterConfig.FilterMaskIdHigh = filter_mask; // << 5;
+//  sFilterConfig.FilterMaskIdLow = 0;
+//  HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig);
 
 //  // Filter 0x100.0x1FF Standard
 //  sFilterConfig.FilterBank = 0;
